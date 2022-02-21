@@ -27,7 +27,7 @@ const index = express();
 index.use(express.json());
 
 // пуск "cron" --> запросы происходят каждые 5 минут
-cron.schedule('*/1 * * * *', async () => {
+cron.schedule('*/5 * * * *', async () => {
   try {
     console.log('running a task every one minutes');
     const currentPrice = await getCurrentPrice();
