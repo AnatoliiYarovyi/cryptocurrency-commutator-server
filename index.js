@@ -5,7 +5,8 @@ const cron = require('node-cron');
 
 const getCurrentPrice = require('./support/getCurrentPrice');
 const writeData = require('./db/writeData');
-const queryData = require('./db/queryData');
+const queryAllCoin = require('./db/queryAllCoin');
+const queryCoin = require('./db/queryCoin');
 
 const { DB_HOST, DB_USER, DB_USER_PASS, DB_NAME, PORT = 3000 } = process.env;
 // конфигурация MySQL
@@ -29,7 +30,7 @@ index.use(express.json());
 // пуск "cron" --> запросы происходят каждые 5 минут
 cron.schedule('*/5 * * * *', async () => {
   try {
-    console.log('running a task every one minutes');
+    console.log('running a task every five minutes');
     const currentPrice = await getCurrentPrice();
     getWriteCoinDB(currentPrice);
   } catch (error) {
@@ -45,10 +46,28 @@ const getWriteCoinDB = currentPrice => {
   console.log('Data recording completed!');
 };
 
-// -------------
+// GET '/' --> Считываем из базы данных 20 последних криптовалют с их ценой
 index.get('/', async function (req, res) {
   try {
-    await queryData(connection);
+    const data = await queryAllCoin(connection);
+    res.json({
+      message: 'Get all coins',
+      data: data,
+    });
+  } catch (error) {
+    console.log(error);
+  }
+});
+
+// GET '/coin/name' --> Считываем из базы криптовалюту с именем "name" с ее средней ценой за последний час
+index.get('/coin/:name', async function (req, res) {
+  try {
+    const { name } = req.params;
+    const data = await queryCoin(connection, name);
+    res.json({
+      message: 'Get coins',
+      data: data,
+    });
   } catch (error) {
     console.log(error);
   }
