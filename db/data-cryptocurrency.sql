@@ -15,7 +15,15 @@
 
 -- DELETE FROM cryptocurrency_prices;
 
+-- -- Выборка 20 криптовалют
 -- SELECT cryptocurrensy_symbol AS symbol, price_average 
 -- FROM cryptocurrency_prices
 -- ORDER BY date DESC
 -- LIMIT 20;
+
+-- -- Выборка по криптовалюте
+SELECT cryptocurrensy_symbol AS symbol, AVG(price_average) AS prise_one
+FROM cryptocurrency_prices
+WHERE cryptocurrensy_symbol = 'BTC'
+ORDER BY date DESC
+LIMIT 12;
