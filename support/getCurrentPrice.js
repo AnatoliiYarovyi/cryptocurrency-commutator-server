@@ -4,9 +4,9 @@ const getAllCoins = require('../api/getAllCoins');
 
 const getCurrentPrice = async () => {
   try {
-    const nameCoins = await getNameCoins(); // считываем с файла "названия" искомых биткоинов
-    const arrAllCoins = await getAllCoins(); // получаем масив объектов со всех маркетов
-    const price = getPrice(nameCoins, arrAllCoins); // находим текущие цены
+    const nameCoins = await getNameCoins(); // reading from the file the "name" of the desired bitcoins
+    const arrAllCoins = await getAllCoins(); // get an array of objects from all markets
+    const price = getPrice(nameCoins, arrAllCoins); // find current prices
     console.log('price', price);
     return price;
   } catch (error) {
@@ -14,7 +14,7 @@ const getCurrentPrice = async () => {
   }
 };
 
-// --- считываем с файла "названиями" биткоинов
+// reading from the file the "name" of the desired bitcoins
 const getNameCoins = async () =>
   await fs
     .readFile('./support/dbNameCoin.json')
@@ -23,7 +23,7 @@ const getNameCoins = async () =>
     })
     .catch(err => console.log(err.message));
 
-// --- находим текущие цены
+// find current prices
 const getPrice = (nameCoins, arrAllCoins) => {
   return nameCoins.reduce((acc, el) => {
     findCoin = arrAllCoins.filter(({ name, symbol }) => {
