@@ -9,7 +9,7 @@ const queryAllCoin = require('./db/queryAllCoin');
 const queryCoin = require('./db/queryCoin');
 
 const { DB_HOST, DB_USER, DB_USER_PASS, DB_NAME, PORT = 3000 } = process.env;
-// конфигурация MySQL
+// configuration MySQL
 const connection = mysql.createConnection({
   host: DB_HOST,
   user: DB_USER,
@@ -27,18 +27,19 @@ connection.connect(err => {
 const index = express();
 index.use(express.json());
 
-// пуск "cron" --> запросы происходят каждые 5 минут
-cron.schedule('*/5 * * * *', async () => {
+// start "cron" --> requests happen every 5 minutes
+const interval = 5;
+cron.schedule(`*/${interval} * * * *`, async () => {
   try {
     console.log('running a task every five minutes');
     const currentPrice = await getCurrentPrice();
-    getWriteCoinDB(currentPrice);
+    // getWriteCoinDB(currentPrice);
   } catch (error) {
     console.log(error);
   }
 });
 
-// записываем данные в таблицу
+// write data to DB
 const getWriteCoinDB = currentPrice => {
   currentPrice.map((el, i) => {
     writeData(connection, el);
@@ -46,7 +47,7 @@ const getWriteCoinDB = currentPrice => {
   console.log('Data recording completed!');
 };
 
-// GET '/' --> Считываем из базы данных 20 последних криптовалют с их ценой
+// GET '/' --> Reading from the database of the 20 latest cryptocurrencies with their average price
 index.get('/', async function (req, res) {
   try {
     const data = await queryAllCoin(connection);
@@ -59,11 +60,12 @@ index.get('/', async function (req, res) {
   }
 });
 
-// GET '/coin/name' --> Считываем из базы криптовалюту с именем "name" с ее средней ценой за последний час
-index.get('/coin/:name', async function (req, res) {
+// GET '/coin/name' --> Reading the requested 'coin'(cryptocurrency) from the database
+index.get('/coin/', async function (req, res) {
   try {
-    const { name } = req.params;
-    const data = await queryCoin(connection, name);
+    const { name, shop, timeInMinutes } = req.query;
+    const timeInterval = Math.floor(timeInMinutes / interval);
+    const data = await queryCoin(connection, name, shop, timeInterval);
     res.json({
       message: 'Get coins',
       data: data,
@@ -73,7 +75,7 @@ index.get('/coin/:name', async function (req, res) {
   }
 });
 
-// прослушиваем прерывание работы программы (ctrl-c)
+// listen for program interruption (ctrl-c)
 process.on('SIGINT', () => {
   connection.end(err => {
     if (err) {
