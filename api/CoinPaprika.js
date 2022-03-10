@@ -14,7 +14,7 @@ const getArrCoinPaprika = async () => {
             list_number: i + 1,
             name: el.name,
             symbol: el.symbol,
-            price: el.quotes.USD.price,
+            price: el.quotes.USD.price || null,
           });
           return acc;
         }, []);
@@ -23,4 +23,5 @@ const getArrCoinPaprika = async () => {
   );
 };
 
+// getArrCoinPaprika().then(data => console.log(data));
 module.exports = getArrCoinPaprika;
