@@ -50,15 +50,11 @@ const getWriteCoinDB = currentPrice => {
 // GET '/' --> Reading from the database of the 20 latest cryptocurrencies with their average price
 index.get('/coinName/', async function (req, res) {
   try {
-    const startTime = new Date();
     const data = await queryAllCoin(connection);
     res.json({
       message: 'Get all coins',
       data: data,
     });
-    const endTime = new Date();
-    console.log('startTimeAllName: ', startTime);
-    console.log('endTimeAllNam: ', endTime);
   } catch (error) {
     console.log(error);
   }
@@ -67,7 +63,6 @@ index.get('/coinName/', async function (req, res) {
 // GET '/coin/name' --> Reading the requested 'coin'(cryptocurrency) from the database
 index.get('/coin/', async function (req, res) {
   try {
-    const startTime = new Date();
     const { name, shop, timeInMinutes } = req.query;
     const timeInterval = Math.floor(timeInMinutes / interval);
     const data = await queryCoin(connection, name, shop, timeInterval);
@@ -75,9 +70,6 @@ index.get('/coin/', async function (req, res) {
       message: 'Get coins',
       data: data,
     });
-    const endTime = new Date();
-    console.log('startTimeCoin: ', startTime);
-    console.log('endTimeCoin: ', endTime);
   } catch (error) {
     console.log(error);
   }
