@@ -6,10 +6,10 @@ const getArrCoinPaprika = require('./Coinpaprika');
 
 const getAllCoins = async () => {
   try {
-    const arrCoinMarketCap = await getArrCoinMarketCap(); // запрос на CoinMarketCap
+    const arrCoinMarketCap = await getArrCoinMarketCap();
     const arrCoinBase = await getCoinBase();
-    const arrCoinStats = await getArrCoinStats(); // запрос на CoinStats
-    const arrKucoin = await getArrKucoin(); // запрос на Kucoin
+    const arrCoinStats = await getArrCoinStats();
+    const arrKucoin = await getArrKucoin();
     const arrArrCoinPaprika = await getArrCoinPaprika();
     const allCoins = arrCoinMarketCap.concat(
       arrCoinBase,
